@@ -1,26 +1,48 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { gql } from 'apollo-boost';
+import { Query } from 'react-apollo'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const query = gql`
+    {
+      getAllUsers{
+        username
+        _id
+        email
+      }
+    }
+`
+class App extends React.Component {
+  render() {
+    return (
+      <Query query={query}>
+        {
+          ({ loading, data, error }) => {
+            if (loading) {
+              return "loading...."
+            }
+            if (error) {
+              return `Error ${error.message}`
+            }
+            return (
+              <div>
+                {
+                  data.getAllUsers.map(item => (
+                    <div>
+                      <p>{item._id}</p>
+                      <p>{item.email}</p>
+                      <p>{item.username}</p>
+                    </div>
+                  ))
+                }
+              </div>
+            )
+          }
+        }
+      </Query>
+    )
+  }
 }
 
 export default App;
